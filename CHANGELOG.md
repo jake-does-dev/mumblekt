@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/jake-does-dev/mumblekt/compare/v1.1.0...v1.2.0) (2025-05-25)
+
+
+### Features
+
+* **protocol:** encode/decode according to Mumble Protocol stack (TCP) ([#6](https://github.com/jake-does-dev/mumblekt/issues/6)) ([310dbe2](https://github.com/jake-does-dev/mumblekt/commit/310dbe20886ffe6daa3503d0f5abed471a1ea562))
+
 ## [1.1.0](https://github.com/jake-does-dev/mumblekt/compare/v1.0.0...v1.1.0) (2025-05-25)
 
 
