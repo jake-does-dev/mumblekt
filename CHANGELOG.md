@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/jake-does-dev/mumblekt/compare/v1.0.0...v1.1.0) (2025-05-25)
+
+
+### Features
+
+* **proto:** initial start on using kotlinx-serialization-protobuf ([#3](https://github.com/jake-does-dev/mumblekt/issues/3)) ([63b8091](https://github.com/jake-does-dev/mumblekt/commit/63b80918f1c22a2b0a20cdf687f9e7adc33dfe66))
+
 ## 1.0.0 (2025-05-25)
 
 
