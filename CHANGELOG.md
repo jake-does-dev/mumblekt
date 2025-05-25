@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/jake-does-dev/mumblekt/compare/v1.2.0...v1.3.0) (2025-05-25)
+
+
+### Features
+
+* **ssl:** use Ktor to connect to Mumble via SSL  ([#8](https://github.com/jake-does-dev/mumblekt/issues/8)) ([55c5aa3](https://github.com/jake-does-dev/mumblekt/commit/55c5aa34537b56428ed3add60d3738c160e7a18c))
+
 ## [1.2.0](https://github.com/jake-does-dev/mumblekt/compare/v1.1.0...v1.2.0) (2025-05-25)
 
 
