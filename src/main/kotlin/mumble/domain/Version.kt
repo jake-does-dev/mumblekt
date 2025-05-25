@@ -12,4 +12,4 @@ data class Version(
     @ProtoNumber(3) val release: String?,
     @ProtoNumber(4) val os: String?,
     @ProtoNumber(5) val osVersion: String?,
-)
+) : Message

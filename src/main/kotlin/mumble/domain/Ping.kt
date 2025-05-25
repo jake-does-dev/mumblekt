@@ -5,4 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
-class Ping
+class Ping : Message

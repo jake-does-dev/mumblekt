@@ -9,4 +9,4 @@ import kotlinx.serialization.protobuf.ProtoNumber
 data class Authenticate(
     @ProtoNumber(1) val username: String,
     @ProtoNumber(2) val password: String
-)
+) : Message
