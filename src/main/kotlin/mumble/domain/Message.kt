@@ -6,6 +6,7 @@ import kotlinx.serialization.protobuf.ProtoNumber
 
 @Serializable
 sealed interface Message {
+    //TODO: the proto seems wrong, use the schema generator to debug why: https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/formats.md#protobuf-schema-generator-experimental
     @Serializable
     @OptIn(ExperimentalSerializationApi::class)
     data class Authenticate(

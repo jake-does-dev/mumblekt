@@ -26,12 +26,12 @@ object MumbleProtocol {
     fun decode(bytes: ByteArray): Message {
         return ProtoBuf.decodeFromByteArray<Message>(bytes.copyOfRange(6, bytes.size))
     }
-}
 
-private fun Message.id(): ByteArray {
-    return when (this) {
-        is Version -> byteArrayOf(0x00, 0x00)
-        is Authenticate -> byteArrayOf(0x00, 0x02)
-        is Ping -> byteArrayOf(0x00, 0x03)
+    private fun Message.id(): ByteArray {
+        return when (this) {
+            is Version -> byteArrayOf(0x00, 0x00)
+            is Authenticate -> byteArrayOf(0x00, 0x02)
+            is Ping -> byteArrayOf(0x00, 0x03)
+        }
     }
 }
