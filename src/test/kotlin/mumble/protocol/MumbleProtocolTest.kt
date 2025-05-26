@@ -1,8 +1,6 @@
 package mumble.protocol
 
 import dev.jakedoes.mumble.domain.Authenticate
-import dev.jakedoes.mumble.domain.Message
-import dev.jakedoes.mumble.domain.Message.*
 import dev.jakedoes.mumble.domain.Ping
 import dev.jakedoes.mumble.domain.Version
 import dev.jakedoes.mumble.protocol.MumbleProtocol
@@ -14,27 +12,33 @@ class MumbleProtocolTest {
     @OptIn(ExperimentalSerializationApi::class)
     @Test
     fun version() {
-        val version: Message = Version(1, 2, "hello", "linux", "whatever")
+        val version = Version(
+            major = 1L,
+            minor = 5L,
+            os = "Linux",
+            osVersion = "Fedora KDE 42",
+            release = "1.5.0",
+        )
         val serialized = MumbleProtocol.encode(version)
-        val deserialized = MumbleProtocol.decode(serialized)
+        val deserialized = MumbleProtocol.decodeVersion(serialized)
         assertEquals(version, deserialized)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Test
     fun authenticate() {
-        val authenticate: Message = Authenticate("jake", "secret-password")
+        val authenticate = Authenticate("jake", "secret-password")
         val serialized = MumbleProtocol.encode(authenticate)
-        val deserialized = MumbleProtocol.decode(serialized)
+        val deserialized = MumbleProtocol.decodeAuthenticate(serialized)
         assertEquals(authenticate, deserialized)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Test
     fun ping() {
-        val ping: Message = Ping
+        val ping = Ping
         val serialized = MumbleProtocol.encode(ping)
-        val deserialized = MumbleProtocol.decode(serialized)
+        val deserialized = MumbleProtocol.decodePing(serialized)
         assertEquals(ping, deserialized)
     }
 }

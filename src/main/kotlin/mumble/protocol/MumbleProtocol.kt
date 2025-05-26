@@ -2,16 +2,19 @@
 
 package dev.jakedoes.mumble.protocol
 
-import dev.jakedoes.mumble.domain.*
+import dev.jakedoes.mumble.domain.Authenticate
+import dev.jakedoes.mumble.domain.Ping
+import dev.jakedoes.mumble.domain.Version
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.encodeToHexString
 import kotlinx.serialization.protobuf.ProtoBuf
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-private val logger = KotlinLogging.logger {  }
+private val logger = KotlinLogging.logger { }
 
 private enum class MessageType(val id: ByteArray) {
     Version(byteArrayOf(0x00, 0x00)),
@@ -34,13 +37,20 @@ private fun ByteArray.toAsciiHexString() = joinToString("") {
 }
 
 object MumbleProtocol {
-    fun encode(message: Message): ByteArray =
-        when (message) {
-            is Authenticate -> encode(MessageType.Authenticate.id, ProtoBuf.encodeToByteArray(message))
-            is Ping -> encode(MessageType.Ping.id, ProtoBuf.encodeToByteArray(message))
-            is Version -> encode(MessageType.Version.id, ProtoBuf.encodeToByteArray(message))
-            is Unrecognised -> NotImplementedError("We cannot explicitly encode messages of type 'Unrecognised'.")
-        } as ByteArray
+    fun encode(message: Version): ByteArray {
+        logger.info { ProtoBuf.encodeToHexString(message) }
+        return encode(MessageType.Version.id, ProtoBuf.encodeToByteArray(message))
+    }
+
+    fun encode(message: Authenticate): ByteArray {
+        logger.info { ProtoBuf.encodeToHexString(message) }
+        return encode(MessageType.Authenticate.id, ProtoBuf.encodeToByteArray(message))
+    }
+
+    fun encode(message: Ping): ByteArray {
+        logger.info { ProtoBuf.encodeToHexString(message) }
+        return encode(MessageType.Ping.id, ProtoBuf.encodeToByteArray(message))
+    }
 
     private fun encode(id: ByteArray, payload: ByteArray): ByteArray {
         val encoding = ByteBuffer.allocate(2 + 4 + payload.size)
@@ -54,11 +64,12 @@ object MumbleProtocol {
         return encoding
     }
 
-    fun decode(bytes: ByteArray): Message =
-        when (findMessageType(bytes.copyOfRange(0, 2))) {
-            MessageType.Version -> ProtoBuf.decodeFromByteArray<Version>(bytes.copyOfRange(6, bytes.size))
-            MessageType.Authenticate -> ProtoBuf.decodeFromByteArray<Authenticate>(bytes.copyOfRange(6, bytes.size))
-            MessageType.Ping -> ProtoBuf.decodeFromByteArray<Ping>(bytes.copyOfRange(6, bytes.size))
-            MessageType.Unrecognised -> Unrecognised("Unable to determine incoming message, with the following bytes: $bytes")
-        }
+    fun decodeVersion(bytes: ByteArray): Version =
+        ProtoBuf.decodeFromByteArray<Version>(bytes.copyOfRange(6, bytes.size))
+
+    fun decodeAuthenticate(bytes: ByteArray): Authenticate =
+        ProtoBuf.decodeFromByteArray<Authenticate>(bytes.copyOfRange(6, bytes.size))
+
+    fun decodePing(bytes: ByteArray): Ping =
+        ProtoBuf.decodeFromByteArray<Ping>(bytes.copyOfRange(6, bytes.size))
 }

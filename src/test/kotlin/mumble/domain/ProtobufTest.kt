@@ -1,6 +1,5 @@
 package mumble.domain
 
-import dev.jakedoes.mumble.domain.Message
 import dev.jakedoes.mumble.domain.Version
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
@@ -13,9 +12,15 @@ class ProtobufTest {
     @OptIn(ExperimentalSerializationApi::class)
     @Test
     fun encodeDecodeTest() {
-        val version: Message = Version(1, 2, "hello", "linux", "whatever")
+        val version = Version(
+            major = 1L,
+            minor = 5L,
+            os = "Linux",
+            osVersion = "Fedora KDE 42",
+            release = "1.5.0",
+        )
         val serialized = ProtoBuf.encodeToByteArray(version)
-        val deserialized = ProtoBuf.decodeFromByteArray<Message>(serialized)
+        val deserialized = ProtoBuf.decodeFromByteArray<Version>(serialized)
         assertEquals(version, deserialized)
     }
 }
