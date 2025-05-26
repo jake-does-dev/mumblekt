@@ -6,6 +6,7 @@ import dev.jakedoes.mumble.domain.Version
 import dev.jakedoes.mumble.protocol.MumbleProtocol
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class MumbleProtocolTest {
@@ -36,7 +37,7 @@ class MumbleProtocolTest {
     @OptIn(ExperimentalSerializationApi::class)
     @Test
     fun ping() {
-        val ping = Ping
+        val ping = Ping()
         val serialized = MumbleProtocol.encode(ping)
         val deserialized = MumbleProtocol.decode(serialized, Ping::class)
         assertEquals(ping, deserialized)
