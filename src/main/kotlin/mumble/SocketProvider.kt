@@ -54,7 +54,7 @@ object SocketProvider {
                 addKeyStore(
                     store = clientKeyStore,
                     password = null,
-                    alias = null // Use null if no friendlyName alias is found in .p12
+                    alias = null // null as there is no friendlyName alias is found in .p12
                 )
                 logger.info { "Client certificate and key configured for TLS." }
             }
