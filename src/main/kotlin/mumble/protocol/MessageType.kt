@@ -2,7 +2,7 @@ package dev.jakedoes.mumble.protocol
 
 enum class MessageType(val id: Short) {
     Version(0),
-    UdpTunnel(1),
+    UDPTunnel(1),
     Authenticate(2),
     Ping(3),
     Reject(4),
@@ -14,7 +14,7 @@ enum class MessageType(val id: Short) {
     BanList(10),
     TextMessage(11),
     PermissionDenied(12),
-    Acl(13),
+    ACL(13),
     QueryUsers(14),
     CryptSetup(15),
     ContextActionModify(16),

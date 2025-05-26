@@ -1,5 +1,7 @@
 package dev.jakedoes.mumble
 
+import dev.jakedoes.logging.LogLevel
+import dev.jakedoes.logging.log
 import dev.jakedoes.mumble.domain.*
 import dev.jakedoes.mumble.protocol.MessageType
 import dev.jakedoes.mumble.protocol.MumbleProtocol
@@ -65,7 +67,25 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
                 val payload = ByteBuffer.allocate(length.getInt(0))
                 repeat(length.getInt(0)) { payload.put(reader.readByte()) }
 
-                when (MessageType.fromId(id.short)) {
+                when (MessageType.fromId(id.getShort(0))) {
+                    MessageType.ACL -> decode(payload.array(), ACL::class)
+                    MessageType.Authenticate -> decode(payload.array(), Authenticate::class)
+                    MessageType.BanList -> decode(payload.array(), BanList::class)
+                    MessageType.ChannelRemove -> decode(payload.array(), ChannelRemove::class)
+                    MessageType.ChannelState -> decode(payload.array(), ChannelState::class)
+                    MessageType.CodecVersion -> decode(payload.array(), CodecVersion::class)
+                    MessageType.ContextAction -> decode(payload.array(), ContextAction::class)
+                    MessageType.ContextActionModify -> decode(payload.array(), ContextActionModify::class)
+                    MessageType.CryptSetup -> decode(payload.array(), CryptSetup::class)
+                    MessageType.PermissionDenied -> decode(payload.array(), PermissionDenied::class)
+                    MessageType.PermissionQuery -> decode(payload.array(), PermissionQuery::class)
+                    MessageType.Ping -> decode(payload.array(), Ping::class, LogLevel.Debug)
+                    MessageType.QueryUsers -> decode(payload.array(), QueryUsers::class)
+                    MessageType.Reject -> decode(payload.array(), Reject::class)
+                    MessageType.RequestBlob -> decode(payload.array(), RequestBlob::class)
+                    MessageType.ServerConfig -> decode(payload.array(), ServerConfig::class)
+                    MessageType.ServerSync -> decode(payload.array(), ServerSync::class)
+                    MessageType.SuggestConfig -> decode(payload.array(), SuggestConfig::class)
                     MessageType.TextMessage -> {
                         val receivedMessage = decode(payload.array(), TextMessage::class)
                         writer.writeByteArray(
@@ -75,11 +95,15 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
                         )
                         writer.flush()
                     }
-
-                    MessageType.ChannelState -> decode(payload.array(), ChannelState::class)
-                    MessageType.CryptSetup -> decode(payload.array(), CryptSetup::class)
-                    MessageType.Ping -> decode(payload.array(), Ping::class)
-                    MessageType.ServerSync -> decode(payload.array(), ServerSync::class)
+                    MessageType.UDPTunnel -> {
+                        logger.debug {"Dropping UDPTunnel messages, as they're not used in the TCP connection." }
+                    }
+                    MessageType.UserList -> decode(payload.array(), UserList::class)
+                    MessageType.UserRemove -> decode(payload.array(), UserRemove::class)
+                    MessageType.UserState -> decode(payload.array(), UserState::class)
+                    MessageType.UserStats -> decode(payload.array(), UserStats::class)
+                    MessageType.Version -> decode(payload.array(), Version::class)
+                    MessageType.VoiceTarget -> decode(payload.array(), VoiceTarget::class)
                     else -> logger.warn { "Unknown message type received" }
                 }
             }
@@ -107,13 +131,15 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
     suspend fun ping() {
         writer.writeByteArray(MumbleProtocol.encode(Ping()))
         writer.flush()
-        logger.info { "Sent ping!" }
+        logger.debug { "Sent ping!" }
     }
 
-    private inline fun <reified T : Any> decode(payload: ByteArray, clazz: KClass<T>): T {
-        logger.info { "Received a ${clazz.simpleName}!" }
+    private inline fun <reified T : Any> decode(payload: ByteArray, clazz: KClass<T>): T =
+        decode(payload, clazz, LogLevel.Info)
+
+    private inline fun <reified T : Any> decode(payload: ByteArray, clazz: KClass<T>, logLevel: LogLevel): T {
         val message: T = MumbleProtocol.decodePayload(payload, clazz)
-        logger.info { "Message: $message" }
+        logger.log(logLevel, "Received: [${message}]")
         return message
     }
 }
