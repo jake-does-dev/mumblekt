@@ -3,12 +3,15 @@
 package dev.jakedoes.mumble.protocol
 
 import dev.jakedoes.mumble.domain.*
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+
+private val logger = KotlinLogging.logger {  }
 
 private enum class MessageType(val id: ByteArray) {
     Version(byteArrayOf(0x00, 0x00)),
@@ -47,7 +50,7 @@ object MumbleProtocol {
             .put(payload)
             .array()
 
-        println("Sending: ${encoding.toAsciiHexString()}")
+        logger.info { "Sending: ${encoding.toAsciiHexString()}" }
         return encoding
     }
 
