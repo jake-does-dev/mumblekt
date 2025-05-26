@@ -1,7 +1,10 @@
 package mumble.protocol
 
+import dev.jakedoes.mumble.domain.Authenticate
 import dev.jakedoes.mumble.domain.Message
 import dev.jakedoes.mumble.domain.Message.*
+import dev.jakedoes.mumble.domain.Ping
+import dev.jakedoes.mumble.domain.Version
 import dev.jakedoes.mumble.protocol.MumbleProtocol
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.test.Test
