@@ -3,20 +3,20 @@ package dev.jakedoes
 import dev.jakedoes.mumble.SocketProvider
 import dev.jakedoes.mumble.domain.Authenticate
 import dev.jakedoes.mumble.domain.Version
+import dev.jakedoes.mumble.protocol.MessageType
 import dev.jakedoes.mumble.protocol.MumbleProtocol
-import io.ktor.network.selector.*
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.Dispatchers
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import kotlin.text.toInt
+
+private val logger = KotlinLogging.logger {  }
 
 // ./gradlew run --args "localhost 64738 mumble-client-cert.p12 mumble-server-cert.pem"
 suspend fun main(args: Array<String>) {
-    assert(args.size == 4) { "Expected four arguments in my array" }
-    val (hostname, port, clientCertPath, serverCertPath) = args
-    val selectorManager = ActorSelectorManager(Dispatchers.IO)
+    assert(args.size == 5) { "Expected four arguments in my array" }
+    val (hostname, port, password, clientCertPath, serverCertPath) = args
 
     /*
     Notes:
@@ -28,12 +28,27 @@ suspend fun main(args: Array<String>) {
     val writer = socket.openWriteChannel()
     val reader = socket.openReadChannel()
 
-    connect(writer)
+    connect(writer, password)
 
-    Thread.sleep(30L * 1000 * 1000)
+    while(true) {
+        val id: Short = ByteBuffer.wrap(reader.readByteArray(2))
+            .order(ByteOrder.BIG_ENDIAN)
+            .short
+
+        val length = ByteBuffer.wrap(reader.readByteArray(4))
+            .order(ByteOrder.BIG_ENDIAN)
+            .int
+
+        when (MessageType.fromId(id)) {
+            MessageType.TextMessage -> logger.info { "Received a text message!" }
+            else -> logger.info { "Received a different message!" }
+        }
+
+        repeat(length) { reader.readByte() }
+    }
 }
 
-private suspend fun connect(writer: ByteWriteChannel) {
+private suspend fun connect(writer: ByteWriteChannel, password: String) {
     writer.writeByteArray(
         MumbleProtocol.encode(
             Version(
@@ -50,7 +65,7 @@ private suspend fun connect(writer: ByteWriteChannel) {
     writer.writeByteArray(
         MumbleProtocol.encode(
             Authenticate(
-                "jake-does-testing", ""
+                "jake-does-testing", password
             )
         )
     )
