@@ -21,7 +21,6 @@ dependencies {
     implementation("io.ktor:ktor-network-tls:2.1.21")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
     implementation("ch.qos.logback:logback-classic:1.5.18")
-    implementation("com.google.protobuf:protobuf-kotlin:4.31.0")
     testImplementation(kotlin("test"))
 }
 
