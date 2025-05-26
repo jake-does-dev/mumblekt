@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/jake-does-dev/mumblekt/compare/v1.3.2...v1.4.0) (2025-05-26)
+
+
+### Features
+
+* **messaging:** add handler for incoming messages ([#15](https://github.com/jake-does-dev/mumblekt/issues/15)) ([111e539](https://github.com/jake-does-dev/mumblekt/commit/111e539c2b4d7a64618e8da596cbc6098f3833e5))
+
 ## [1.3.2](https://github.com/jake-does-dev/mumblekt/compare/v1.3.1...v1.3.2) (2025-05-26)
 
 
