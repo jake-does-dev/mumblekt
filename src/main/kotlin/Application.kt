@@ -1,8 +1,8 @@
 package dev.jakedoes
 
 import dev.jakedoes.mumble.SocketProvider
-import dev.jakedoes.mumble.domain.Message.Authenticate
-import dev.jakedoes.mumble.domain.Message.Version
+import dev.jakedoes.mumble.domain.Authenticate
+import dev.jakedoes.mumble.domain.Version
 import dev.jakedoes.mumble.protocol.MumbleProtocol
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
@@ -28,7 +28,7 @@ suspend fun main(args: Array<String>) {
     writer.writeByteArray(
         MumbleProtocol.encode(
             Version(
-                1, 5, "mumblekt", "Fedora KDE Plasma", "42"
+                release = "mumblekt"
             )
         )
     )
