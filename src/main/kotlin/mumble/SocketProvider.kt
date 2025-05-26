@@ -1,5 +1,6 @@
 package dev.jakedoes.mumble
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
@@ -11,6 +12,8 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.coroutineContext
+
+private val logger = KotlinLogging.logger {  }
 
 object SocketProvider {
     suspend fun ssl(hostname: String, port: Int, clientP12Path: String, serverPemPath: String): Socket {
@@ -26,7 +29,7 @@ object SocketProvider {
 
         if (serverCert != null) {
             customTrustStore.setCertificateEntry("mumble-server-cert", serverCert)
-            println("Mumble server certificate added to custom trust store.")
+            logger.info { "Mumble server certificate added to custom trust store." }
         } else {
             throw IllegalStateException("Failed to load Mumble server certificate from $clientP12Path")
         }
@@ -46,14 +49,14 @@ object SocketProvider {
                 FileInputStream(clientP12Path).use { fis ->
                     clientKeyStore.load(fis, null)
                 }
-                println("Client KeyStore loaded successfully.")
+                logger.info { "Client KeyStore loaded successfully." }
 
                 addKeyStore(
                     store = clientKeyStore,
                     password = null,
                     alias = null // Use null if no friendlyName alias is found in .p12
                 )
-                println("Client certificate and key configured for TLS.")
+                logger.info { "Client certificate and key configured for TLS." }
             }
     }
 }
