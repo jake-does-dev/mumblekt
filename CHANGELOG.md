@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/jake-does-dev/mumblekt/compare/v1.3.0...v1.3.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* **proto:** fix up accidental serialization of sealed interface ([#10](https://github.com/jake-does-dev/mumblekt/issues/10)) ([e265447](https://github.com/jake-does-dev/mumblekt/commit/e26544738a04d536dd5be0430f207c9a76b35110))
+
 ## [1.3.0](https://github.com/jake-does-dev/mumblekt/compare/v1.2.0...v1.3.0) (2025-05-25)
 
 
