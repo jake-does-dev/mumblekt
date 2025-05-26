@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.0](https://github.com/jake-does-dev/mumblekt/compare/v1.4.0...v1.5.0) (2025-05-26)
+
+
+### Features
+
+* **client:** introduce mumble client ([#19](https://github.com/jake-does-dev/mumblekt/issues/19)) ([46a7de6](https://github.com/jake-does-dev/mumblekt/commit/46a7de604bcd45ea1ea61ea8027d806b026c077a))
+* **client:** stabilise TCP client public facing API ([#22](https://github.com/jake-does-dev/mumblekt/issues/22)) ([488392f](https://github.com/jake-does-dev/mumblekt/commit/488392fdf948bcec0a00f702922f848c2fd006c6))
+* **messages:** add more message types ([#17](https://github.com/jake-does-dev/mumblekt/issues/17)) ([04c1290](https://github.com/jake-does-dev/mumblekt/commit/04c12901b3ef35247e7a7fe30e2661375b675784))
+* **messages:** define remaining TCP messages ([#20](https://github.com/jake-does-dev/mumblekt/issues/20)) ([03d2bc5](https://github.com/jake-does-dev/mumblekt/commit/03d2bc53998f82f6e4160c5a3b65f87d51c57ee9))
+* **subscribers:** add subscribers and callbacks in client ([#21](https://github.com/jake-does-dev/mumblekt/issues/21)) ([9449e5c](https://github.com/jake-does-dev/mumblekt/commit/9449e5caad4614227abcb9e2a73528f34a7077bb))
+
 ## [1.4.0](https://github.com/jake-does-dev/mumblekt/compare/v1.3.2...v1.4.0) (2025-05-26)
 
 
