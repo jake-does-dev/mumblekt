@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/jake-does-dev/mumblekt/compare/v1.3.1...v1.3.2) (2025-05-26)
+
+
+### Bug Fixes
+
+* **proto:** using sealed interface causes types to be serialized too ([#13](https://github.com/jake-does-dev/mumblekt/issues/13)) ([459dbf5](https://github.com/jake-does-dev/mumblekt/commit/459dbf55fbc755a22f4f915e062e02e12a155550))
+
 ## [1.3.1](https://github.com/jake-does-dev/mumblekt/compare/v1.3.0...v1.3.1) (2025-05-26)
 
 
