@@ -8,6 +8,9 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.Dispatchers
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import kotlin.text.toInt
 
 // ./gradlew run --args "localhost 64738 mumble-client-cert.p12 mumble-server-cert.pem"
 suspend fun main(args: Array<String>) {
@@ -25,10 +28,20 @@ suspend fun main(args: Array<String>) {
     val writer = socket.openWriteChannel()
     val reader = socket.openReadChannel()
 
+    connect(writer)
+
+    Thread.sleep(30L * 1000 * 1000)
+}
+
+private suspend fun connect(writer: ByteWriteChannel) {
     writer.writeByteArray(
         MumbleProtocol.encode(
             Version(
-                release = "mumblekt"
+                major = 1L,
+                minor = 5L,
+                os = "Linux",
+                osVersion = "Fedora KDE 42",
+                release = "1.5.0",
             )
         )
     )
@@ -42,6 +55,4 @@ suspend fun main(args: Array<String>) {
         )
     )
     writer.flush()
-
-    Thread.sleep(30L * 1000 * 1000)
 }
