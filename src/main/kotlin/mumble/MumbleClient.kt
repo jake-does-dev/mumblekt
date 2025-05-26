@@ -40,23 +40,11 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
         }
     }
 
-    /**
-     * Registers a callback function to be invoked when a message of the specified type is received.
-     *
-     * @param T The type of the message to listen for.
-     * @param clazz The KClass of the message type (e.g., `TextMessage::class`).
-     * @param callback The suspend function to call when the message is received. It will receive the decoded message as an argument.
-     */
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> on(clazz: KClass<T>, callback: MessageCallback<T>) {
-        // We need to cast the callback to MessageCallback<*> to store it in the map
-        // This cast is safe because we'll ensure type safety when retrieving and invoking.
-        val callbacksForType = messageCallbacks.getOrPut(clazz) { mutableListOf() } as MutableList<MessageCallback<Any>>
-        callbacksForType.add(callback as MessageCallback<Any>) // Cast back to Any for storage
-        logger.debug { "Registered callback for message type: ${clazz.simpleName}" }
+    suspend fun handshake(major: Long, minor: Long, username: String, password: String) {
+        write(Version(major, minor, "linux", "mumblekt", "1.5.0"))
+        write(Authenticate(username, password))
     }
 
-    // This allows you to set up callbacks easily when creating the client.
     fun init(initBlock: MumbleClient.() -> Unit): MumbleClient {
         initBlock()
         startPinging()
@@ -64,22 +52,155 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
         return this
     }
 
+    /**
+     * Registers a callback function, e.g.,
+     * ```
+     * MumbleClient.connect(...).init {
+     *     on(TextMessage::class) { message ->
+     *         // do stuff with the `message: TestMessage`
+     *     }
+     *     on(Ping::class) { message ->
+     *         // do stuff with the `message: Ping`
+     *     }
+     * }
+     * ```
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> on(clazz: KClass<T>, callback: MessageCallback<T>) {
+        val callbacksForType = messageCallbacks.getOrPut(clazz) { mutableListOf() } as MutableList<MessageCallback<Any>>
+        callbacksForType.add(callback as MessageCallback<Any>)
+        logger.debug { "Registered callback for message type: ${clazz.simpleName}" }
+    }
 
-    fun startPinging() {
+    /** Duplicating to make it clear to the user what message types are acceptable, instead of just `T`.
+     * Again, limitations to `kotlinx.serialization.protobuf` mean that we cannot use a `sealed interface Message`
+     * @see [[MumbleProtocol]]
+     */
+    suspend fun write(message: ACL) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: Authenticate) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: BanList) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: ChannelRemove) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: ChannelState) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: CodecVersion) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: ContextAction) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: ContextActionModify) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: CryptSetup) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: PermissionDenied) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: PermissionQuery) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: Ping) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: QueryUsers) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: Reject) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: RequestBlob) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: ServerConfig) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: ServerSync) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: SuggestConfig) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: TextMessage) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: UDPTunnel) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: UserList) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: UserRemove) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: UserState) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: UserStats) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: Version) {
+        writeInternal(message)
+    }
+
+    suspend fun write(message: VoiceTarget) {
+        writeInternal(message)
+    }
+
+    private suspend fun <T : Any> writeInternal(message: T) {
+        val packet = MumbleProtocol.encode(message)
+        writer.writeByteArray(packet)
+        writer.flush()
+    }
+
+    private fun startPinging() {
         if (pingJob?.isActive == true) {
             logger.info { "Ping job already active." }
             return
         }
         pingJob = launch(CoroutineName("MumbleClient-Pinger")) {
             while (isActive) {
-                ping()
+                write(Ping())
                 delay(15.seconds)
             }
             logger.info { "Ping job stopped." }
         }
     }
 
-    fun startReadingMessages() {
+    private fun startReadingMessages() {
         if (readMessagesJob?.isActive == true) {
             logger.info { "Message reading job already active." }
             return
@@ -118,6 +239,7 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
                     MessageType.UDPTunnel -> {
                         logger.debug { "Dropping UDPTunnel messages, as they're not used in the TCP connection." }
                     }
+
                     MessageType.UserList -> decodeInternal(payloadArray, UserList::class)
                     MessageType.UserRemove -> decodeInternal(payloadArray, UserRemove::class)
                     MessageType.UserState -> decodeInternal(payloadArray, UserState::class)
@@ -130,7 +252,6 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
                     }
                 }
 
-                // --- NEW: Invoke Callbacks ---
                 if (decodedMessage != null) {
                     val clazz = decodedMessage::class
                     val callbacks = messageCallbacks[clazz]
@@ -140,7 +261,7 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
                                 // Safe cast because we store callbacks in the map based on their KClass
                                 @Suppress("UNCHECKED_CAST")
                                 val typedCallback = callback as MessageCallback<Any>
-                                typedCallback(decodedMessage) // Invoke the callback
+                                typedCallback(decodedMessage)
                             } catch (e: Exception) {
                                 logger.error(e) { "Error executing callback for message type ${clazz.simpleName}" }
                             }
@@ -151,30 +272,6 @@ class MumbleClient(val reader: ByteReadChannel, val writer: ByteWriteChannel, pr
         }
     }
 
-    suspend fun handshake(major: Long, minor: Long, username: String, password: String) {
-        writer.writeByteArray(
-            MumbleProtocol.encode(
-                Version(
-                    major = major,
-                    minor = minor,
-                    os = "linux",
-                    osVersion = "mumblekt",
-                    release = "1.5.0",
-                )
-            )
-        )
-        writer.flush()
-        writer.writeByteArray(MumbleProtocol.encode(Authenticate(username, password)))
-        writer.flush()
-    }
-
-    suspend fun ping() {
-        writer.writeByteArray(MumbleProtocol.encode(Ping()))
-        writer.flush()
-    }
-
-    // Renamed 'decode' to 'decodeMessageInternal' to avoid confusion with the public `on` function
-    // and to indicate it's an internal helper that also logs.
     private inline fun <reified T : Any> decodeInternal(payload: ByteArray, clazz: KClass<T>): T {
         return decodeInternal(payload, clazz, LogLevel.Info)
     }
