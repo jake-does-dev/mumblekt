@@ -20,7 +20,7 @@ class MumbleProtocolTest {
             release = "1.5.0",
         )
         val serialized = MumbleProtocol.encode(version)
-        val deserialized = MumbleProtocol.decodeVersion(serialized)
+        val deserialized = MumbleProtocol.decode(serialized, Version::class)
         assertEquals(version, deserialized)
     }
 
@@ -29,7 +29,7 @@ class MumbleProtocolTest {
     fun authenticate() {
         val authenticate = Authenticate("jake", "secret-password")
         val serialized = MumbleProtocol.encode(authenticate)
-        val deserialized = MumbleProtocol.decodeAuthenticate(serialized)
+        val deserialized = MumbleProtocol.decode(serialized, Authenticate::class)
         assertEquals(authenticate, deserialized)
     }
 
@@ -38,7 +38,7 @@ class MumbleProtocolTest {
     fun ping() {
         val ping = Ping
         val serialized = MumbleProtocol.encode(ping)
-        val deserialized = MumbleProtocol.decodePing(serialized)
+        val deserialized = MumbleProtocol.decode(serialized, Ping::class)
         assertEquals(ping, deserialized)
     }
 }
