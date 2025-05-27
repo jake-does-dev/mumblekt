@@ -9,7 +9,7 @@ import kotlinx.serialization.protobuf.ProtoNumber
 data class TextMessage(
     @ProtoNumber(1) val actor: Int? = null,
     @ProtoNumber(2) val session: List<Int>? = emptyList(),
-    @ProtoNumber(6) val channelId: List<Int>? = emptyList(),
+    @ProtoNumber(3) val channelId: List<Int>? = emptyList(),
     @ProtoNumber(4) val treeId: List<Int>? = emptyList(),
     @ProtoNumber(5) val message: String,
 )

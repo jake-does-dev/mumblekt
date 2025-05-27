@@ -1,6 +1,6 @@
 package dev.jakedoes.mumble.protocol
 
-enum class MessageType(val id: Short) {
+internal enum class MessageType(val id: Short) {
     Version(0),
     UDPTunnel(1),
     Authenticate(2),
@@ -26,7 +26,8 @@ enum class MessageType(val id: Short) {
     UserStats(22),
     RequestBlob(23),
     ServerConfig(24),
-    SuggestConfig(25);
+    SuggestConfig(25),
+    Unrecognised(-1);
 
     companion object {
         private val map = MessageType.entries.associateBy(MessageType::id)
