@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/jake-does-dev/mumblekt/compare/v1.5.0...v1.5.1) (2025-05-27)
+
+
+### Bug Fixes
+
+* **structure:** refactor, and fix issue with TextMessage's ProtoNumber ([#26](https://github.com/jake-does-dev/mumblekt/issues/26)) ([91bf2fb](https://github.com/jake-does-dev/mumblekt/commit/91bf2fb5819e059ba0d165def6076a045ad7d3fd)), closes [#25](https://github.com/jake-does-dev/mumblekt/issues/25)
+
 ## [1.5.0](https://github.com/jake-does-dev/mumblekt/compare/v1.4.0...v1.5.0) (2025-05-26)
 
 
