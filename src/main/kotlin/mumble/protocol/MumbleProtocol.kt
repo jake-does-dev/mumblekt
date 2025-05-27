@@ -53,9 +53,9 @@ private fun ByteArray.toAsciiHexString() = joinToString("") {
  * name as part of its message - i.e., `dev.jakedoes.mumble.protocol.TextMessage`. Whilst this is valid for the
  * Protobuf implementation, it does not play ball with Mumble's protocol. Consequently, we have to take a bit of
  * verbosity here.
- * @see [[dev.jakedoes.mumble.MumbleClient.write]]
+ * @see [[dev.jakedoes.mumble.client.MumbleClient.write]]
  */
-object MumbleProtocol {
+internal object MumbleProtocol {
     fun <T : Any> encode(message: T): ByteArray =
         when (message) {
             is ACL -> {

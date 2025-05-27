@@ -15,7 +15,7 @@ import kotlin.coroutines.coroutineContext
 
 private val logger = KotlinLogging.logger {  }
 
-object SocketProvider {
+internal object SocketProvider {
     suspend fun ssl(hostname: String, port: Int, clientP12Path: String, serverPemPath: String): Socket {
         val selectorManager = ActorSelectorManager(Dispatchers.IO)
 
