@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/jake-does-dev/mumblekt/compare/v1.0.0...v1.0.1) (2025-05-31)
+
+
+### Bug Fixes
+
+* **publish:** attempt to automatically publish on releases ([#35](https://github.com/jake-does-dev/mumblekt/issues/35)) ([4f74eb6](https://github.com/jake-does-dev/mumblekt/commit/4f74eb64170b35afb26f18945614f3e75bed2903))
+
 ## 1.0.0 (2025-05-29)
 
 
