@@ -110,7 +110,7 @@ publishing {
             url = uri("https://maven.pkg.github.com/jake-does-dev/mumblekt")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GRADLE_PUBLISH_TOKEN")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
