@@ -2,7 +2,9 @@ plugins {
     kotlin("jvm") version "2.1.20"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.21"
     id("io.ktor.plugin") version "3.1.2"
+    id("org.jetbrains.dokka") version "1.9.10"
     id("application")
+    id("maven-publish")
 }
 
 kotlin {
@@ -10,7 +12,7 @@ kotlin {
 }
 
 group = "dev.jakedoes"
-version = "1.0-SNAPSHOT"
+version = System.getenv("VERSION")?.removePrefix("v") ?: "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -46,4 +48,70 @@ tasks.jar {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    outputDirectory.set(layout.buildDirectory.dir("javadoc"))
+}
+
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+
+
+tasks.register<Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+}
+
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            artifact(tasks.getByName<Jar>("sourcesJar"))
+            artifact(tasks.getByName<Jar>("javadocJar"))
+
+            pom {
+                name.set("mumblekt")
+                description.set("A Mumble wrapper, written in Kotlin")
+                url.set("https://github.com/jake-does-dev/mumblekt")
+                licenses {
+                    license {
+                        name.set("GNU General Public License v3.0")
+                        url.set("https://www.gnu.org/licenses/gpl-3.0.en.html")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("jake-does-dev")
+                        name.set("Jake Allan")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/jake-does-dev/mumblekt.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/jake-does-dev/mumblekt.git")
+                    url.set("https://github.com/jake-does-dev/mumblekt")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/jake-does-dev/mumblekt")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GRADLE_PUBLISH_TOKEN")
+            }
+        }
+    }
 }
