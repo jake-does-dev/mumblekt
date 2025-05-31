@@ -31,6 +31,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Debug Credentials
+        run: |
+          echo "--- Verifying Credentials for Gradle ---"
+          echo "GITHUB_ACTOR: $GITHUB_ACTOR"
+          echo "GITHUB_TOKEN (first 5 chars): ${GITHUB_TOKEN:0:5}*****" # Only print first few chars for safety
+          echo "----------------------------------------"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }} # Pass explicitly for this debug step too
+
       - name: Determine Project Version
         id: set_version
         run: |
